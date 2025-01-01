@@ -11,7 +11,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  ValueNotifier<String?> nowPlaying = ValueNotifier(null);
+  Media? nowPlaying;
 
   @override
   Widget build(BuildContext context) {
@@ -20,23 +20,31 @@ class _AppState extends State<App> {
         body: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            ValueListenableBuilder(
-              valueListenable: nowPlaying,
-              builder: (context, value, placeholder) {
-                if (value == null) return placeholder!;
-                return Player(url: value);
-              },
-              child: Text("No video selected"),
-            ),
+            Player(media: nowPlaying),
+            if (nowPlaying == null)
+              const Card.outlined(
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text("Please select a media below to play"),
+                ),
+              ),
             Expanded(
               child: ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 12,
+                ),
                 itemCount: urls.length,
-                physics: BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
-                  final url = urls[index];
+                  final media = urls[index];
                   return ListTile(
-                    title: Text(url),
-                    onTap: () => nowPlaying.value = url,
+                    selected: nowPlaying == media,
+                    title: Text(media.url),
+                    trailing: _indicators(media),
+                    onTap: () => setState(() {
+                      nowPlaying = media;
+                    }),
                   );
                 },
               ),
@@ -45,5 +53,16 @@ class _AppState extends State<App> {
         ),
       ),
     );
+  }
+
+  Widget? _indicators(Media media) {
+    if (media.type == MediaType.live) {
+      return const Chip(
+        label: Text("LIVE", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.red,
+      );
+    }
+
+    return null;
   }
 }
