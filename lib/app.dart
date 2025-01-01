@@ -20,7 +20,12 @@ class _AppState extends State<App> {
         body: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
-            Player(media: nowPlaying),
+            Player(
+              // using provider would be preferred in real app
+              // (im just stress testing better player)
+              key: UniqueKey(),
+              media: nowPlaying,
+            ),
             if (nowPlaying == null)
               const Card.outlined(
                 child: Padding(

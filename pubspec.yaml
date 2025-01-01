@@ -38,6 +38,9 @@ dependencies:
   # The video player
   better_player: ^0.0.84
 
+  # Because betterplayer doesn't without fullscreen
+  wakelock_plus: ^1.2.10
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

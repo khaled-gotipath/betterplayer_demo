@@ -6,10 +6,11 @@ void main() {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(),
-      darkTheme: ThemeData.dark(),
+      // darkTheme: ThemeData.dark(),
       home: const App(),
     ),
   );
+
 }
 
 enum MediaType { normal, live }
@@ -20,6 +21,8 @@ class Media {
 
   const Media(this.url, {this.type = MediaType.normal});
 }
+
+
 
 const List<Media> urls = [
   Media(
