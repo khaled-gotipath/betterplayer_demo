@@ -10,6 +10,7 @@ class SeekBarWithPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Slider(
       value: 0,
+
       onChanged: (value) {
         // controller.seekTo(Duration(seconds: value.toInt()));
       },

@@ -19,6 +19,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     BetterPlayerConfiguration(
       autoPlay: true,
       aspectRatio: 16 / 9,
+      // fit: BoxFit.contain,
       controlsConfiguration: BetterPlayerControlsConfiguration(
         controlsHideTime: Durations.extralong4,
         playerTheme: BetterPlayerTheme.custom,

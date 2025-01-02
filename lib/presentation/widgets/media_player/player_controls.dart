@@ -1,10 +1,7 @@
 import 'package:better_player/better_player.dart';
-import 'package:betterplayer_demo/bloc/media_player_bloc.dart';
-import 'package:betterplayer_demo/models/media.dart';
 import 'package:betterplayer_demo/presentation/widgets/media_player/seekbar_with_preview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PlayerControls extends StatefulWidget {
   final BetterPlayerController controller;
@@ -18,11 +15,15 @@ class PlayerControls extends StatefulWidget {
 class _PlayerControlsState extends State<PlayerControls> {
   BetterPlayerController get controller => widget.controller;
   bool controlsVisible = false;
+  bool lockedUI = false;
 
-  void toggleControls() async {
-    setState(() {
-      controlsVisible = !controlsVisible;
-    });
+  void toggleControls() {
+    setState(() => controlsVisible = !controlsVisible);
+  }
+
+  void toggleVideoFit() {
+    final next = (controller.getFit().index + 1) % BoxFit.values.length;
+    controller.setOverriddenFit(BoxFit.values[next]);
   }
 
   @override
@@ -37,12 +38,24 @@ class _PlayerControlsState extends State<PlayerControls> {
     super.dispose();
   }
 
+  void eventListener(BetterPlayerEvent event) {
+    switch (event.betterPlayerEventType) {
+      case BetterPlayerEventType.play:
+      case BetterPlayerEventType.pause:
+        setState(() {});
+        break;
+
+      default:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: widget.controller.controllerEventStream,
+      stream: controller.controllerEventStream,
       builder: (context, _) {
-        if (widget.controller.betterPlayerDataSource == null) {
+        if (controller.betterPlayerDataSource == null) {
           return const SizedBox();
         }
 
@@ -60,16 +73,20 @@ class _PlayerControlsState extends State<PlayerControls> {
           child: AnimatedOpacity(
             duration: Durations.medium3,
             opacity: controlsVisible ? 1 : 0,
-            child: ColoredBox(
+            child: Material(
               color: Colors.black.withOpacity(0.7),
-              child: Column(
-                children: [
-                  if (controlsVisible) ...{
-                    titleBar(context),
-                    Expanded(child: playPauseButton(context)),
-                    SeekBarWithPreview(widget.controller),
-                  }
-                ],
+              child: Padding(
+                padding: EdgeInsets.all(adaptivePadding),
+                child: Column(
+                  children: [
+                    if (controlsVisible) ...{
+                      titleBar(context),
+                      Expanded(child: playPauseButton(context)),
+                      SeekBarWithPreview(widget.controller),
+                      bottomActions(context),
+                    }
+                  ],
+                ),
               ),
             ),
           ),
@@ -78,8 +95,10 @@ class _PlayerControlsState extends State<PlayerControls> {
     );
   }
 
+  double get adaptivePadding => controller.isFullScreen ? 16 : 4;
+
   Widget titleBar(BuildContext ctx) {
-    final media = ctx.select<MediaPlayerBloc, Media>((v) => v.state.current!);
+    // final media = ctx.select<MediaPlayerBloc, Media>((v) => v.state.current!);
 
     return Row(
       children: [
@@ -87,36 +106,69 @@ class _PlayerControlsState extends State<PlayerControls> {
           onPressed: () {},
           icon: const Icon(CupertinoIcons.back),
         ),
-        if (widget.controller.isFullScreen) Text(media.title),
+        // if (controller.isFullScreen) Text(media.title),
       ],
     );
   }
 
-  void eventListener(BetterPlayerEvent event) {
-    switch (event.betterPlayerEventType) {
-      case BetterPlayerEventType.play:
-      case BetterPlayerEventType.pause:
-        setState(() {});
-        break;
-
-      default:
-        break;
-    }
-  }
-
   Widget playPauseButton(BuildContext context) {
-    if (widget.controller.isPlaying() == true) {
+    if (controller.isPlaying() == true) {
       return IconButton(
-        onPressed: () => widget.controller.pause(),
+        onPressed: () => controller.pause(),
         icon: const Icon(CupertinoIcons.pause, size: 52),
       );
     }
     return IconButton(
-      onPressed: () => widget.controller.play(),
+      onPressed: () => controller.play(),
       icon: const Icon(CupertinoIcons.play_fill, size: 52),
     );
   }
 
-  bool get _showLoadingIndicator =>
-      widget.controller.isVideoInitialized() != true;
+  Widget bottomActions(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(CupertinoIcons.lock),
+        ),
+        const Spacer(),
+        if (controller.isFullScreen) ...{
+          TextButton.icon(
+            onPressed: () {},
+            label:
+                const Text("Episodes", style: TextStyle(color: Colors.white)),
+            icon: const Icon(
+              CupertinoIcons.list_bullet_below_rectangle,
+              color: Colors.white,
+            ),
+          ),
+          TextButton.icon(
+            onPressed: () {},
+            label: const Text(
+              "Next Episode",
+              style: TextStyle(color: Colors.white),
+            ),
+            icon: const Icon(CupertinoIcons.forward_end, color: Colors.white),
+          ),
+          const Spacer(),
+        },
+        IconButton(
+          onPressed: toggleVideoFit,
+          icon: const Icon(CupertinoIcons.crop),
+        ),
+        if (!controller.isFullScreen)
+          IconButton(
+            onPressed: () => controller.enterFullScreen(),
+            icon: const Icon(CupertinoIcons.fullscreen),
+          )
+        else
+          IconButton(
+            onPressed: () => controller.exitFullScreen(),
+            icon: const Icon(CupertinoIcons.fullscreen_exit),
+          )
+      ],
+    );
+  }
+
+  bool get _showLoadingIndicator => controller.isVideoInitialized() != true;
 }
