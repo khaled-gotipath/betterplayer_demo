@@ -1,6 +1,5 @@
 import 'package:betterplayer_demo/bloc/media_player_bloc.dart';
 import 'package:betterplayer_demo/bloc/playlist_bloc.dart';
-import 'package:betterplayer_demo/models/media.dart';
 import 'package:betterplayer_demo/presentation/widgets/playlist/media_item_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,21 +13,21 @@ class PlaylistView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PlaylistBloc, PlaylistState>(
-      builder: (context, state) => ListView.builder(
+    return Builder(builder: (context) {
+      final playlistState = context.watch<PlaylistBloc>().state;
+      final mediaPlayerState = context.watch<MediaPlayerBloc>().state;
+
+      return ListView.builder(
         padding: const EdgeInsets.symmetric(
           horizontal: 6,
           vertical: 12,
         ),
-        itemCount: state.playlist.length,
+        itemCount: playlistState.playlist.length,
         itemBuilder: (context, index) => MediaItemView(
-          state.playlist[index],
-          // selected: _isSelected(context, state.playlist[index]),
+          playlistState.playlist[index],
+          selected: mediaPlayerState.current == playlistState.playlist[index],
         ),
-      ),
-    );
+      );
+    });
   }
-
-  bool _isSelected(BuildContext context, Media media) =>
-      context.select<MediaPlayerBloc, Media?>((v) => v.state.current) == media;
 }

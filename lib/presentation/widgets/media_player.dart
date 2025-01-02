@@ -36,7 +36,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
       media.url,
       liveStream: media.type == MediaType.live,
       useAsmsSubtitles: true,
-      // The audio sources are auto handled
       useAsmsTracks: true,
       // Prevents OOM
       bufferingConfiguration: BetterPlayerBufferingConfiguration(
@@ -45,6 +44,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
       ),
     );
     controller.setupDataSource(dataSource);
+    // We should also seek to last played position here
+    controller.seekTo(Duration.zero);
   }
 
   @override

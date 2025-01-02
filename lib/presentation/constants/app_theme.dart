@@ -8,6 +8,7 @@ class AppTheme {
         primary: Colors.red,
         primaryFixed: Colors.red,
         brightness: Brightness.dark,
+        surface: Colors.black,
       ),
     );
   }
