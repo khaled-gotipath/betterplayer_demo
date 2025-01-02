@@ -8,38 +8,48 @@ class MediaRepo {
     // Simulating loading
     await Future.delayed(Durations.extralong4);
 
-    if (Random().nextInt(100) == 69) throw "<Insert funny error message here>";
+    // if (Random().nextInt(100) == 69) throw "<Insert funny error message here>";
 
     return const [
       Media(
         "https://byphdgllyk.gpcdn.net/hls/deeptotv/index.m3u8",
+        title: "Deepto TV",
         type: MediaType.live,
       ),
       Media(
+        title: "Media 1",
         "https://vhx9nfhlsy.gpcdn.net/transcoded/2024/11/12/1024857/1/3/1835/manifest.m3u8",
       ),
       Media(
+        title: "Media 2",
         "https://vhx9nfhlsy.gpcdn.net/transcoded/2024/04/10/1017325/1/3/1835/manifest.m3u8",
       ),
       Media(
+        title: "Media 3",
         "https://vhx9nfhlsy.gpcdn.net/transcoded/2024/04/09/1017316/1/3/1835/manifest.m3u8",
       ),
       Media(
+        title: "Media 4",
         "https://vhx9nfhlsy.gpcdn.net/transcoded/2024/02/04/1015579/1/3/1835/manifest.m3u8",
       ),
       Media(
+        title: "Media 5",
         "https://vhx9nfhlsy.gpcdn.net/transcoded/2024/01/08/1014886/1/3/1835/manifest.m3u8",
       ),
       Media(
+        title: "Media 6",
         "https://vhx9nfhlsy.gpcdn.net/transcoded/2023/12/13/1014279/1/3/1835/manifest.m3u8",
       ),
       Media(
+        title: "Media 7",
         "https://vhx9nfhlsy.gpcdn.net/transcoded/2023/09/28/1010091/1/3/1835/manifest.m3u8",
       ),
       Media(
+        title: "Media 8",
         "https://vhx9nfhlsy.gpcdn.net/transcoded/2023/04/20/1003279/1/3/1835/manifest.m3u8",
       ),
       Media(
+        title: "Media 9",
         "https://vhx9nfhlsy.gpcdn.net/transcoded/2023/05/04/1003795/1/3/1835/manifest.m3u8",
       ),
     ];

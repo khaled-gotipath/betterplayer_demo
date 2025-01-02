@@ -1,6 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:betterplayer_demo/bloc/media_player_bloc.dart';
 import 'package:betterplayer_demo/models/media.dart';
+import 'package:betterplayer_demo/presentation/widgets/media_player/player_controls.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,24 +15,21 @@ class MediaPlayer extends StatefulWidget {
 }
 
 class _MediaPlayerState extends State<MediaPlayer> {
-  late final BetterPlayerController controller = BetterPlayerController(
-    const BetterPlayerConfiguration(
+  final controller = BetterPlayerController(
+    BetterPlayerConfiguration(
       autoPlay: true,
       aspectRatio: 16 / 9,
       controlsConfiguration: BetterPlayerControlsConfiguration(
-        fullscreenEnableIcon: CupertinoIcons.arrow_up_left_arrow_down_right,
-        fullscreenDisableIcon: CupertinoIcons.arrow_down_right_arrow_up_left,
-        playIcon: CupertinoIcons.play_arrow_solid,
-        pauseIcon: CupertinoIcons.pause_solid,
-        skipBackIcon: CupertinoIcons.gobackward_15,
-        skipForwardIcon: CupertinoIcons.goforward_15,
-        // Default osd background is too dark
-        controlBarColor: Colors.black54,
+        controlsHideTime: Durations.extralong4,
+        playerTheme: BetterPlayerTheme.custom,
+        customControlsBuilder: (c, _) => PlayerControls(controller: c),
       ),
     ),
   );
 
-  void updateDataSource(Media media) {
+  void updateDataSource(Media media) async {
+    if (media.url == controller.betterPlayerDataSource?.url) return;
+
     final dataSource = BetterPlayerDataSource.network(
       media.url,
       liveStream: media.type == MediaType.live,
@@ -43,7 +41,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         maxBufferMs: const Duration(seconds: 60).inMilliseconds,
       ),
     );
-    controller.setupDataSource(dataSource);
+    await controller.setupDataSource(dataSource);
     // We should also seek to last played position here
     controller.seekTo(Duration.zero);
   }
@@ -76,7 +74,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
   Widget build(BuildContext context) {
     return BlocListener<MediaPlayerBloc, MediaPlayerState>(
       listener: mediaPlayerBlocListener,
-      child: BetterPlayer(controller: controller),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          BetterPlayer(controller: controller),
+          // Ads Go Here
+        ],
+      ),
     );
   }
 
@@ -84,5 +88,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
   void dispose() {
     super.dispose();
     controller.removeEventsListener(eventListener);
+    controller.dispose();
   }
 }

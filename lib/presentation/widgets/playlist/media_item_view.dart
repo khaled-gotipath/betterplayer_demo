@@ -17,7 +17,8 @@ class MediaItemView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       selected: selected,
-      title: Text(media.url),
+      title: Text(media.title),
+      subtitle: Text(media.url),
       trailing: _indicators(media),
       onTap: () => context.read<MediaPlayerBloc>().add(Play(media: media)),
     );

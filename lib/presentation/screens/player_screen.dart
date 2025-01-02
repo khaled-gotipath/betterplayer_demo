@@ -1,6 +1,6 @@
 import 'package:betterplayer_demo/bloc/media_player_bloc.dart';
 import 'package:betterplayer_demo/bloc/playlist_bloc.dart';
-import 'package:betterplayer_demo/presentation/widgets/media_player.dart';
+import 'package:betterplayer_demo/presentation/widgets/media_player/media_player.dart';
 import 'package:betterplayer_demo/presentation/widgets/playlist/playlist_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
